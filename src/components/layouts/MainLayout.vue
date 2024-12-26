@@ -24,6 +24,8 @@ import TheFooter from "../../components/layout/TheFooter.vue";
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
+  padding: 3rem;
+  margin: 2rem auto;
 }
 
 .main-content {
@@ -32,6 +34,7 @@ import TheFooter from "../../components/layout/TheFooter.vue";
 }
 
 .container {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
