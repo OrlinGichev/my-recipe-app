@@ -1,0 +1,50 @@
+<script setup>
+import TheHeader from "../../components/layout/TheHeader.vue";
+import TheFooter from "../../components/layout/TheFooter.vue";
+</script>
+
+<template>
+  <div class="layout">
+    <TheHeader />
+    <main class="main-content">
+      <div class="container">
+        <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </div>
+    </main>
+    <TheFooter />
+  </div>
+</template>
+<style scoped>
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Анимации за преход между страници */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
