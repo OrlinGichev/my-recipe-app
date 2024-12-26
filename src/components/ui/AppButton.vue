@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "vue";
 const props = defineProps({
   variant: {
     type: String,
@@ -20,7 +21,7 @@ const props = defineProps({
   },
 });
 
-const buttonClasses = coomputed(() => ({
+const buttonClasses = computed(() => ({
   button: true,
   [`button--${props.variant}`]: true,
   [`button--${props.size}`]: true,
