@@ -13,7 +13,7 @@ const password = ref("");
 const errorMessage = ref("");
 
 const handleSubmit = async () => {
-  if (!email.value || password.value) {
+  if (!email.value || !password.value) {
     errorMessage.value = "Моля, попълнете всички полета";
     return;
   }
