@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import MainLayout from "../components/layouts/MainLayout.vue";
 import AuthLayout from '../components/layouts/AuthLayout.vue'
+import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -12,12 +13,14 @@ const router = createRouter({
               {
                 path: 'login',
                 name: 'Login',
-                component: () => import('../views/LoginView.vue')
+                component: () => import('../views/LoginView.vue'),
+                meta:{ requiresGuest: true}
               },
               {
                 path: 'register',
                 name: 'Register',
-                component: () => import('../views/RegisterView.vue')
+                component: () => import('../views/RegisterView.vue'),
+                meta:{ requiresGuest: true}
               }
             ]
           },
@@ -33,7 +36,8 @@ const router = createRouter({
              {
                  path:'/recipes',
                  name: 'Recipes',
-                 component:() => import('../views/RecipesView.vue')
+                 component:() => import('../views/RecipesView.vue'),
+                 meta: { requiresAuth: true }
              },
              {
                  path:'/about',
@@ -48,7 +52,20 @@ const router = createRouter({
          ]
         }
 ]
-
 })
+
+// Навигационен guard
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  const isAuthenticated = authStore.isAuthenticated();
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next('/auth/login');
+  } else if (to.meta.requiresGuest && isAuthenticated) {
+    next('/');
+  } else {
+    next();
+  }
+});
 
 export default router
