@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRecipesStore } from "../stores/recipes";
+import defaultRecipeImage from "../assets/default-recipe.jpg";
 
 const recipesStore = useRecipesStore();
 const isLoading = ref(false);
@@ -67,7 +68,7 @@ onMounted(() => {
       >
         <div class="recipe-image">
           <img
-            :src="recipe.imageUrl || '/default-recipe.jpg'"
+            :src="recipe.imageUrl || defaultRecipeImage"
             :alt="recipe.title"
           />
         </div>
@@ -209,7 +210,7 @@ onMounted(() => {
 }
 
 .recipe-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-15px);
 }
 
 .recipe-image {
