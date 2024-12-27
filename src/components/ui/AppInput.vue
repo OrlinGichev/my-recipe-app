@@ -45,27 +45,28 @@ const inputClasses = computed(() => ({
 }));
 </script>
 <template>
-  <div class="input-wrapper"></div>
-  <!-- Label -->
-  <label v-if="label" class="label">
-    {{ label }}
-    <span v-if="required" class="required">*</span>
-  </label>
+  <div class="input-wrapper">
+    <!-- Label -->
+    <label v-if="label" class="label">
+      {{ label }}
+      <span v-if="required" class="required">*</span>
+    </label>
 
-  <!-- Input -->
-  <input
-    :value="modelValue"
-    :type="type"
-    :placeholder="placeholder"
-    :disabled="disabled"
-    :class="inputClasses"
-    @input="emit('update:modelValue', $event.targer.value)"
-  />
+    <!-- Input -->
+    <input
+      :value="modelValue"
+      :type="type"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :class="inputClasses"
+      @input="emit('update:modelValue', $event.target.value)"
+    />
 
-  <!-- Съобщение за грешка -->
-  <span v-if="error" class="error-message">
-    {{ error }}
-  </span>
+    <!-- Съобщение за грешка -->
+    <span v-if="error" class="error-message">
+      {{ error }}
+    </span>
+  </div>
 </template>
 <style scoped>
 .input-wrapper {

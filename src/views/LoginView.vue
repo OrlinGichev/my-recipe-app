@@ -4,18 +4,17 @@ import { useAuthStore } from "../stores/auth";
 import { ref } from "vue";
 import AppInput from "../components/ui/AppInput.vue";
 import AppButton from "../components/ui/AppButton.vue";
-import { errorMessages } from "vue/compiler-sfc";
 
 const router = useRouter();
 const authStore = useAuthStore();
 
 const email = ref("");
 const password = ref("");
-const error = ref("");
+const errorMessage = ref("");
 
 const handleSubmit = async () => {
   if (!email.value || password.value) {
-    errorMessages.value = "Моля, попълнете всички полета";
+    errorMessage.value = "Моля, попълнете всички полета";
     return;
   }
 
@@ -23,7 +22,7 @@ const handleSubmit = async () => {
     await authStore.loginUser(email.value, password.value);
     router.push("/"); // Пренасочваме към първоначалната страница
   } catch (error) {
-    errorMessages.value = "Грешен имейл или парола";
+    errorMessage.value = "Грешен имейл или парола";
   }
 };
 </script>
@@ -52,8 +51,8 @@ const handleSubmit = async () => {
         />
       </div>
 
-      <div v-if="errorMessages" class="error-message">
-        {{ errorMessages }}
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
       </div>
 
       <div class="form-actions">
