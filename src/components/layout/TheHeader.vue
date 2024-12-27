@@ -1,8 +1,20 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "../../stores/auth";
+import { auth } from "../../services/firebase";
 
 const router = useRouter();
+const authStore = useAuthStore();
+
+const handleLogout = async () => {
+  try {
+    await authStore.logoutUser();
+    router.push("/auth/login");
+  } catch (error) {
+    console.error("Грешка при излизане:", error);
+  }
+};
 </script>
 <template>
   <header class="header">
@@ -15,6 +27,12 @@ const router = useRouter();
           <router-link to="/"> Начало </router-link>
           <router-link to="/recipes"> Рецепти </router-link>
           <router-link to="/about"> За нас </router-link>
+          <template v-if="authStore.isAuthenticated()">
+            <button @click="handleLogout" class="logout-button">Изход</button>
+          </template>
+          <template v-else>
+            <router-link to="/auth/login" class="auth-link"> Вход </router-link>
+          </template>
         </div>
       </div>
     </nav>
@@ -51,7 +69,8 @@ const router = useRouter();
 
 .nav-links {
   display: flex;
-  gap: 2rem; /* пространство между линковете */
+  gap: 2rem;
+  align-items: center;
 }
 
 .nav-links a {
@@ -62,5 +81,23 @@ const router = useRouter();
 
 .nav-links a:hover {
   color: #333;
+}
+
+.logout-button {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease;
+}
+
+.logout-button:hover {
+  color: #c82333;
+}
+
+.auth-link {
+  color: #4caf50 !important;
 }
 </style>

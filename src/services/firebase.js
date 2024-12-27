@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { getAuth, setPersistence, browserSessionPersistence  } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -11,4 +11,15 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig)
-export const auth = getAuth(app)
+const auth = getAuth(app)
+
+// Настройваме session persistence
+setPersistence(auth, browserSessionPersistence)
+  .then(() => {
+    console.log('Session persistence настроена успешно')
+  })
+  .catch((error) => {
+    console.error('Грешка при настройване на persistence:', error)
+  })
+
+export { auth }
