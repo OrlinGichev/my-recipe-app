@@ -1,6 +1,8 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
+import { useVuelidate } from "@vuelidate/core";
+import { required, email, minLength } from "@vuelidate/validators";
 import { ref } from "vue";
 import AppInput from "../components/ui/AppInput.vue";
 import AppButton from "../components/ui/AppButton.vue";
@@ -8,21 +10,47 @@ import AppButton from "../components/ui/AppButton.vue";
 const router = useRouter();
 const authStore = useAuthStore();
 
-const email = ref("");
-const password = ref("");
-const errorMessage = ref("");
+const formData = ref({
+  email: "",
+  password: "",
+});
+
+const rules = {
+  email: {
+    required,
+    email,
+    $autoDirty: true,
+  },
+  password: {
+    required,
+    minLength: minLength(6),
+    $autoDirty: true,
+  },
+};
+
+const v$ = useVuelidate(rules, formData);
 
 const handleSubmit = async () => {
-  if (!email.value || !password.value) {
-    errorMessage.value = "Моля, попълнете всички полета";
+  const result = await v$.value.$validate();
+  if (!result) {
     return;
   }
 
   try {
-    await authStore.loginUser(email.value, password.value);
-    router.push("/"); // Пренасочваме към първоначалната страница
+    await authStore.loginUser(formData.value.email, formData.value.password);
+    router.push("/"); // Пренасочване към началната страница след успешен вход
   } catch (error) {
-    errorMessage.value = "Грешен имейл или парола";
+    if (
+      error.code === "auth/user-not-found" ||
+      error.code === "auth/wrong-password"
+    ) {
+      errorMessage.value = "Грешен имейл или парола";
+    } else if (error.code === "auth/too-many-requests") {
+      errorMessage.value =
+        "Твърде много опити за вход. Моля, опитайте по-късно";
+    } else {
+      errorMessage.value = "Възникна грешка при входа";
+    }
   }
 };
 </script>
@@ -34,19 +62,24 @@ const handleSubmit = async () => {
     <form @submit.prevent="handleSubmit" class="form">
       <div class="form-group">
         <AppInput
-          v-model="email"
+          v-model="formData.email"
           type="email"
           label="Имейл"
           placeholder="example@email.com"
+          :error="v$.email.$error ? 'Моля, въведете валиден имейл адрес' : ''"
           required
         />
       </div>
+
       <div class="form-group">
         <AppInput
-          v-model="password"
+          v-model="formData.password"
           type="password"
           label="Парола"
           placeholder="Въведете парола"
+          :error="
+            v$.password.$error ? 'Паролата трябва да бъде поне 6 символа' : ''
+          "
           required
         />
       </div>
@@ -56,7 +89,7 @@ const handleSubmit = async () => {
       </div>
 
       <div class="form-actions">
-        <AppButton type="submit" :disabled="authStore.loading">
+        <AppButton type="submit" :disabled="v$.$invalid || authStore.loading">
           {{ authStore.loading ? "Зареждане..." : "Вход" }}
         </AppButton>
       </div>
@@ -64,13 +97,13 @@ const handleSubmit = async () => {
       <div class="form-footer">
         <p>
           Нямате акаунт?
-          <router-link to="/auth/register">Регистрирай се</router-link>
+          <router-link to="/auth/register">Регистрирайте се</router-link>
         </p>
       </div>
     </form>
   </div>
 </template>
-<script setup></script>
+
 <style scoped>
 .login-form {
   width: 100%;
