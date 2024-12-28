@@ -18,7 +18,7 @@ export const useRecipesStore = defineStore('recipes', () =>{
         error.value = null
         try {            
             const response = await recipesService.getAllRecipes()            
-            recipes.value = response.data
+            recipes.value = response || []
         } catch (e) {
            error.value = e.message || 'Възникна грешка при зареждане на рецептите'
             throw e
@@ -32,8 +32,9 @@ export const useRecipesStore = defineStore('recipes', () =>{
         error.value = null
         try {          
             const response = await recipesService.createRecipe(recipeData)   
-            recipes.value.push(response.data)
-            return response.data
+            if (!recipes.value) recipes.value = [];
+            recipes.value.push(response);
+            return response;
         } catch (e) {
              error.value = e.message || 'Възникна грешка при добавяне на рецептата'
             throw e

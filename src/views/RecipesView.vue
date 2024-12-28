@@ -12,8 +12,12 @@ const loadRecipes = async () => {
   errorMessage.value = "";
 
   try {
+    console.log("Преди fetchRecipes");
     await recipesStore.fetchRecipes();
+    console.log("След fetchRecipes");
+    console.log("Заредени рецепти:", recipesStore.recipes);
   } catch (error) {
+    console.error("Грешка при зареждане:", error);
     errorMessage.value =
       error.message || "Възникна грешка при зареждане на рецептите";
   } finally {
@@ -50,7 +54,7 @@ onMounted(() => {
 
     <!-- Няма рецепти -->
     <div
-      v-else-if="recipesStore.recipes.length === 0"
+      v-else-if="!recipesStore.recipes || recipesStore.recipes.length === 0"
       class="status-message empty"
     >
       <p>Все още няма добавени рецепти.</p>
