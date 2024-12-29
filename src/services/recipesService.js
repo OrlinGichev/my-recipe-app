@@ -18,40 +18,45 @@ export const recipesService = {
 
     // Вземане на всички рецепти
     async getAllRecipes() {
-        console.log('Започва взимане на рецепти от Firestore');
+      
         try {
             const querySnapshot = await getDocs(collection(db, RECIPES_COLLECTION));
             const recipes = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
-            console.log('Взети рецепти от Firestore:', recipes);
+
             return recipes;
         } catch (error) {
-            console.error('Грешка при взимане на рецепти:', error);
+
             throw error;
         }
     },
 
     // Вземане на конкретна рецепта по ID
     async getRecipeById(id) {
-        const docRef = doc(db,RECIPES_COLLECTION, id)
-        const docSnap = await getDoc(docRef)
+        try {
+           
+            const docRef = doc(db,RECIPES_COLLECTION, id)
+            const docSnap = await getDoc(docRef)          
 
-        if(docSnap.exists()){
-            return {
-                id: docSnap.id,
-                ...docSnap.data()
-            }
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                return {
+                    id: docSnap.id,
+                    ...data
+                };
+            } 
+
+            throw new Error('Рецептата не е намерена')
+        } catch (error) {
+            throw error;
         }
-
-        throw new Error('Рецептата не е намерена')
     },
 
       // Създаване на нова рецепта
-    async createRecipe(recipeData) {
-        console.log('Starting createRecipe with data:', recipeData);
-        
+      
+    async createRecipe(recipeData) {        
         // Създаване на рецептата в Firestore
         try {
         const docRef = await addDoc(collection(db, RECIPES_COLLECTION), {

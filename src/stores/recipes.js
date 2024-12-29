@@ -43,6 +43,20 @@ export const useRecipesStore = defineStore('recipes', () =>{
         }
     }
 
+    const fetchRecipeById = async (id) => {
+        loading.value = true;
+        error.value = null;
+        try {
+            const response = await recipesService.getRecipeById(id);
+            return response;
+        } catch (e) {
+            error.value = e.message || 'Възникна грешка при зареждане на рецептата';
+            throw e;
+        } finally {
+            loading.value = false;
+        }
+    }
+
     const updateRecipe = async (id, recipeData) => {
         loading.value = true
         error.value = null
@@ -82,6 +96,7 @@ export const useRecipesStore = defineStore('recipes', () =>{
         getAllRecipes,
         getRecipeById,
         fetchRecipes,
+        fetchRecipeById,
         addRecipe,
         updateRecipe,
         deleteRecipe

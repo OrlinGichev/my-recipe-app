@@ -12,12 +12,8 @@ const loadRecipes = async () => {
   errorMessage.value = "";
 
   try {
-    console.log("Преди fetchRecipes");
     await recipesStore.fetchRecipes();
-    console.log("След fetchRecipes");
-    console.log("Заредени рецепти:", recipesStore.recipes);
   } catch (error) {
-    console.error("Грешка при зареждане:", error);
     errorMessage.value =
       error.message || "Възникна грешка при зареждане на рецептите";
   } finally {
@@ -89,7 +85,7 @@ onMounted(() => {
             </span>
           </div>
           <div class="recipe-footer">
-            <router-link :to="'/recipes/' + recipe.id" class="view-button">
+            <router-link :to="`/recipes/${recipe.id}`" class="view-button">
               Виж повече
             </router-link>
           </div>
