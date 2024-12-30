@@ -5,14 +5,11 @@
       <div class="logo-section">
         <router-link to="/" class="logo"> Моето приложение </router-link>
       </div>
-      <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
-          <component :is="Component" />
-        </transition>
-      </router-view>
+      <router-view />
     </div>
   </div>
 </template>
+
 <style scoped>
 .auth-layout {
   min-height: 100vh;

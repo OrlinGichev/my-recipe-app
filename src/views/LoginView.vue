@@ -4,11 +4,15 @@ import { useAuthStore } from "../stores/auth";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email, minLength } from "@vuelidate/validators";
 import { ref } from "vue";
+import { useNotification } from "../composables/useNotification";
+import AppNotification from "../components/ui/AppNotification.vue";
 import AppInput from "../components/ui/AppInput.vue";
 import AppButton from "../components/ui/AppButton.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
+
+const { message, type, isVisible, showNotification } = useNotification();
 
 const formData = ref({
   email: "",
@@ -33,76 +37,62 @@ const rules = {
 const v$ = useVuelidate(rules, formData);
 
 const handleSubmit = async () => {
-  const result = await v$.value.$validate();
-  if (!result) {
-    return;
-  }
-
   try {
     await authStore.loginUser(formData.value.email, formData.value.password);
-    router.push("/"); // Пренасочване към началната страница след успешен вход
+    showNotification("Успешен вход!", "success");
+    router.push("/");
   } catch (error) {
-    if (
-      error.code === "auth/user-not-found" ||
-      error.code === "auth/wrong-password"
-    ) {
-      errorMessage.value = "Грешен имейл или парола";
-    } else if (error.code === "auth/too-many-requests") {
-      errorMessage.value =
-        "Твърде много опити за вход. Моля, опитайте по-късно";
-    } else {
-      errorMessage.value = "Възникна грешка при входа";
-    }
+    showNotification("Грешен имейл или парола", "error");
   }
 };
 </script>
 
 <template>
-  <div class="login-form">
-    <h1 class="form-title">Вход</h1>
+  <div>
+    <AppNotification :message="message" :type="type" :isVisible="isVisible" />
 
-    <form @submit.prevent="handleSubmit" class="form">
-      <div class="form-group">
-        <AppInput
-          v-model="formData.email"
-          type="email"
-          label="Имейл"
-          placeholder="example@email.com"
-          :error="v$.email.$error ? 'Моля, въведете валиден имейл адрес' : ''"
-          required
-        />
-      </div>
+    <div class="login-form">
+      <h1 class="form-title">Вход</h1>
 
-      <div class="form-group">
-        <AppInput
-          v-model="formData.password"
-          type="password"
-          label="Парола"
-          placeholder="Въведете парола"
-          :error="
-            v$.password.$error ? 'Паролата трябва да бъде поне 6 символа' : ''
-          "
-          required
-        />
-      </div>
+      <form @submit.prevent="handleSubmit" class="form">
+        <div class="form-group">
+          <AppInput
+            v-model="formData.email"
+            type="email"
+            label="Имейл"
+            placeholder="example@email.com"
+            :error="v$.email.$error ? 'Моля, въведете валиден имейл адрес' : ''"
+            required
+          />
+        </div>
 
-      <div v-if="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
+        <div class="form-group">
+          <AppInput
+            v-model="formData.password"
+            type="password"
+            label="Парола"
+            placeholder="Въведете парола"
+            :error="
+              v$.password.$error ? 'Паролата трябва да бъде поне 6 символа' : ''
+            "
+            required
+          />
+        </div>
 
-      <div class="form-actions">
-        <AppButton type="submit" :disabled="v$.$invalid || authStore.loading">
-          {{ authStore.loading ? "Зареждане..." : "Вход" }}
-        </AppButton>
-      </div>
+        <div class="form-actions">
+          <AppButton type="submit" :disabled="v$.$invalid || authStore.loading">
+            {{ authStore.loading ? "Зареждане..." : "Вход" }}
+          </AppButton>
+        </div>
 
-      <div class="form-footer">
-        <p>
-          Нямате акаунт?
-          <router-link to="/auth/register">Регистрирайте се</router-link>
-        </p>
-      </div>
-    </form>
+        <div class="form-footer">
+          <p>
+            Нямате акаунт?
+            <router-link to="/auth/register">Регистрирайте се</router-link>
+          </p>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
