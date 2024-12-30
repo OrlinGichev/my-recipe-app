@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { auth } from '../services/firebase'
+import { onAuthStateChanged } from 'firebase/auth'
 import MainLayout from "../components/layouts/MainLayout.vue";
 import AuthLayout from '../components/layouts/AuthLayout.vue'
 import { useAuthStore } from '../stores/auth'
@@ -85,11 +87,27 @@ const router = createRouter({
 ]
 })
 
-// Навигационен guard
-router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore();
-  const isAuthenticated = authStore.isAuthenticated();
+// Създаваме функция, която връща Promise
+const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, 
+      user => {
+        unsubscribe()
+        resolve(user)
+      },
+      err => {
+        reject(err)
+      }
+    )
+  })
+}
 
+// Навигационен guard
+ router.beforeEach(async(to, from, next) => {
+  const authStore = useAuthStore();
+  const isAuthenticated = await getCurrentUser()
+
+  console.log("Преди",to.meta.requiresAuth,isAuthenticated)
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/auth/login');
   } else if (to.meta.requiresGuest && isAuthenticated) {
