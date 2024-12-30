@@ -64,9 +64,9 @@ export const useRecipesStore = defineStore('recipes', () =>{
             const response = await recipesService.updateRecipe(id, recipeData)   
             const index = recipes.value.findIndex(recipe => recipe.id === id)
             if (index !== -1) {
-                recipes.value[index] = response.data
+                recipes.value[index] = response
             }
-            return response.data
+            return response
         } catch (e) {
              error.value = e.message || 'Възникна грешка при обновяване на рецептата'
             throw e

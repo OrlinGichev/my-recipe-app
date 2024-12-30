@@ -15,6 +15,8 @@ const formData = ref({
   password: "",
 });
 
+const errorMessage = ref("");
+
 const rules = {
   email: {
     required,

@@ -78,26 +78,23 @@ export const recipesService = {
     },
 
      // Обновяване на рецепта
-     async updateRecipe(id, recipeData, imageFile) {
-        let imageUrl = recipeData.imageUrl
-         // Качване на ново изображение ако има такова
-         if(imageFile){
-            const storageRef = ref(storage, `recipe-images/${Date.now()}-${imageFile.name}`)
-            await uploadBytes(storageRef, imageFile)
-            imageUrl = await getDownloadURL(storageRef)
-         }
-         const docRef = doc(db, RECIPES_COLLECTION, id)
-         await updateDoc(docRef, {
-             ...recipeData,
-             imageUrl,
-             updatedAt: new Date()
-         })
- 
-         return {
-             id,
-             ...recipeData,
-             imageUrl
-         }
+     async updateRecipe(id, recipeData) {
+        try {
+            const docRef = doc(db, RECIPES_COLLECTION, id);
+            await updateDoc(docRef, {
+                ...recipeData,
+                updatedAt: new Date()
+            });
+    
+            return {
+                id,
+                ...recipeData,
+                updatedAt: new Date()
+            };
+        } catch (error) {
+            console.error('Error updating recipe:', error);
+            throw error;
+        }
     },
 
      // Изтриване на рецепта

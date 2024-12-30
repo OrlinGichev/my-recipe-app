@@ -16,6 +16,7 @@ const loadRecipes = async () => {
   } catch (error) {
     errorMessage.value =
       error.message || "Възникна грешка при зареждане на рецептите";
+    console.error("Error loading recipes:", error);
   } finally {
     isLoading.value = false;
   }
