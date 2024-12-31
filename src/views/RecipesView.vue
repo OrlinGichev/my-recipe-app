@@ -1,22 +1,22 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRecipesStore } from "../stores/recipes";
+import { useNotification } from "../composables/useNotification";
+import AppNotification from "../components/ui/AppNotification.vue";
 import defaultRecipeImage from "../assets/default-recipe.jpg";
 
 const recipesStore = useRecipesStore();
+const { message, type, isVisible, showNotification } = useNotification();
+
 const isLoading = ref(false);
-const errorMessage = ref("");
 
 const loadRecipes = async () => {
   isLoading.value = true;
-  errorMessage.value = "";
 
   try {
     await recipesStore.fetchRecipes();
   } catch (error) {
-    errorMessage.value =
-      error.message || "Възникна грешка при зареждане на рецептите";
-    console.error("Error loading recipes:", error);
+    showNotification("Грешка при зареждане на рецептите", "error");
   } finally {
     isLoading.value = false;
   }
@@ -29,66 +29,63 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="recipes-view">
-    <div class="recipes-header">
-      <h1 class="view-title">Рецепти</h1>
-      <router-link to="/recipes/create" class="create-button">
-        Добави рецепта
-      </router-link>
-    </div>
+  <div>
+    <AppNotification :message="message" :type="type" :isVisible="isVisible" />
+    <div class="recipes-view">
+      <div class="recipes-header">
+        <h1 class="view-title">Рецепти</h1>
+        <router-link to="/recipes/create" class="create-button">
+          Добави рецепта
+        </router-link>
+      </div>
 
-    <!-- Състояние на зареждане -->
-    <div v-if="isLoading" class="status-message loading">
-      <div class="spinner"></div>
-      <p>Зареждане на рецептите...</p>
-    </div>
+      <!-- Състояние на зареждане -->
+      <div v-if="isLoading" class="status-message loading">
+        <div class="spinner"></div>
+        <p>Зареждане на рецептите...</p>
+      </div>
 
-    <!-- Състояние на грешка -->
-    <div v-else-if="errorMessage" class="status-message error">
-      <p>{{ errorMessage }}</p>
-      <button @click="loadRecipes" class="retry-button">Опитай отново</button>
-    </div>
-
-    <!-- Няма рецепти -->
-    <div
-      v-else-if="!recipesStore.recipes || recipesStore.recipes.length === 0"
-      class="status-message empty"
-    >
-      <p>Все още няма добавени рецепти.</p>
-      <router-link to="/recipes/create" class="create-link">
-        Добави първата рецепта
-      </router-link>
-    </div>
-
-    <!-- Списък с рецепти -->
-    <div v-else class="recipes-grid">
+      <!-- Няма рецепти -->
       <div
-        v-for="recipe in recipesStore.recipes"
-        :key="recipe.id"
-        class="recipe-card"
+        v-else-if="!recipesStore.recipes || recipesStore.recipes.length === 0"
+        class="status-message empty"
       >
-        <div class="recipe-image">
-          <img
-            :src="recipe.imageUrl || defaultRecipeImage"
-            :alt="recipe.title"
-          />
-        </div>
-        <div class="recipe-content">
-          <h3>{{ recipe.title }}</h3>
-          <p class="recipe-description">{{ recipe.description }}</p>
-          <div class="recipe-meta">
-            <span class="cooking-time">
-              <i class="time-icon"></i>
-              {{ recipe.cookingTime }} мин
-            </span>
-            <span class="difficulty">
-              {{ recipe.difficulty }}
-            </span>
+        <p>Все още няма добавени рецепти.</p>
+        <router-link to="/recipes/create" class="create-link">
+          Добави първата рецепта
+        </router-link>
+      </div>
+
+      <!-- Списък с рецепти -->
+      <div v-else class="recipes-grid">
+        <div
+          v-for="recipe in recipesStore.recipes"
+          :key="recipe.id"
+          class="recipe-card"
+        >
+          <div class="recipe-image">
+            <img
+              :src="recipe.imageUrl || defaultRecipeImage"
+              :alt="recipe.title"
+            />
           </div>
-          <div class="recipe-footer">
-            <router-link :to="`/recipes/${recipe.id}`" class="view-button">
-              Виж повече
-            </router-link>
+          <div class="recipe-content">
+            <h3>{{ recipe.title }}</h3>
+            <p class="recipe-description">{{ recipe.description }}</p>
+            <div class="recipe-meta">
+              <span class="cooking-time">
+                <i class="time-icon"></i>
+                {{ recipe.cookingTime }} мин
+              </span>
+              <span class="difficulty">
+                {{ recipe.difficulty }}
+              </span>
+            </div>
+            <div class="recipe-footer">
+              <router-link :to="`/recipes/${recipe.id}`" class="view-button">
+                Виж повече
+              </router-link>
+            </div>
           </div>
         </div>
       </div>
@@ -160,24 +157,6 @@ onMounted(() => {
   100% {
     transform: rotate(360deg);
   }
-}
-
-.error {
-  color: #dc3545;
-}
-
-.retry-button {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.retry-button:hover {
-  background-color: #c82333;
 }
 
 .empty {

@@ -3,12 +3,15 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useRecipesStore } from "../stores/recipes";
 import { useAuthStore } from "../stores/auth";
+import { useNotification } from "../composables/useNotification";
+import AppNotification from "../components/ui/AppNotification.vue";
 import AppInput from "../components/ui/AppInput.vue";
 import AppButton from "../components/ui/AppButton.vue";
 
 const router = useRouter();
 const recipesStore = useRecipesStore();
 const authStore = useAuthStore();
+const { message, type, isVisible, showNotification } = useNotification();
 
 const recipe = ref({
   title: "",
@@ -38,103 +41,106 @@ const handleSubmit = async () => {
     };
 
     await recipesStore.addRecipe(recipeWithUser);
+    showNotification("Рецептата е създадена успешно!", "success");
     router.push("/recipes");
   } catch (error) {
-    errorMessage.value =
-      error.message || "Възникна грешка при създаване на рецептата";
+    showNotification("Грешка при създаване на рецептата", "error");
   } finally {
     isSubmitting.value = false;
   }
 };
 </script>
 <template>
-  <div class="create-recipe">
-    <h1 class="page-title">Създай нова рецепта</h1>
-    <form @submit.prevent="handleSubmit" class="recipe-form">
-      <div class="form-group">
-        <AppInput
-          v-model="recipe.title"
-          label="Заглавие"
-          placeholder="Въведете заглавие на рецептата"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <AppInput
-          v-model="recipe.description"
-          label="Кратко описание"
-          placeholder="Въведете кратко описание"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <AppInput
-          v-model="recipe.ingredients"
-          label="Съставки"
-          placeholder="Въведете съставките, всяка на нов ред"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <AppInput
-          v-model="recipe.instructions"
-          label="Инструкции"
-          placeholder="Въведете инструкциите стъпка по стъпка"
-          required
-        />
-      </div>
-      <div class="form-row">
-        <div class="form-group half">
+  <div>
+    <AppNotification :message="message" :type="type" :isVisible="isVisible" />
+    <div class="create-recipe">
+      <h1 class="page-title">Създай нова рецепта</h1>
+      <form @submit.prevent="handleSubmit" class="recipe-form">
+        <div class="form-group">
           <AppInput
-            v-model="recipe.cookingTime"
-            label="Време за приготвяне (минути)"
-            type="number"
-            min="1"
+            v-model="recipe.title"
+            label="Заглавие"
+            placeholder="Въведете заглавие на рецептата"
             required
           />
         </div>
-        <div class="form-group half">
+        <div class="form-group">
           <AppInput
-            v-model="recipe.servings"
-            label="Порции"
-            type="number"
-            min="1"
+            v-model="recipe.description"
+            label="Кратко описание"
+            placeholder="Въведете кратко описание"
             required
           />
         </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Сложност</label>
-        <select v-model="recipe.difficulty" class="form-select">
-          <option value="easy">Лесна</option>
-          <option value="medium">Средна</option>
-          <option value="hard">Сложна</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <AppInput
-          v-model="recipe.imageUrl"
-          label="URL на снимката"
-          placeholder="Въведете URL на снимката на рецептата"
-          type="url"
-        />
-      </div>
-      <div v-if="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
-      <div class="form-actions">
-        <AppButton
-          type="button"
-          variant="outline"
-          @click="router.push('/recipes')"
-        >
-          Отказ
-        </AppButton>
-        <AppButton type="submit" :disabled="isSubmitting">
-          {{ isSubmitting ? "Създаване..." : "Създай рецепта" }}
-        </AppButton>
-      </div>
-    </form>
+        <div class="form-group">
+          <AppInput
+            v-model="recipe.ingredients"
+            label="Съставки"
+            placeholder="Въведете съставките, всяка на нов ред"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <AppInput
+            v-model="recipe.instructions"
+            label="Инструкции"
+            placeholder="Въведете инструкциите стъпка по стъпка"
+            required
+          />
+        </div>
+        <div class="form-row">
+          <div class="form-group half">
+            <AppInput
+              v-model="recipe.cookingTime"
+              label="Време за приготвяне (минути)"
+              type="number"
+              min="1"
+              required
+            />
+          </div>
+          <div class="form-group half">
+            <AppInput
+              v-model="recipe.servings"
+              label="Порции"
+              type="number"
+              min="1"
+              required
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Сложност</label>
+          <select v-model="recipe.difficulty" class="form-select">
+            <option value="easy">Лесна</option>
+            <option value="medium">Средна</option>
+            <option value="hard">Сложна</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <AppInput
+            v-model="recipe.imageUrl"
+            label="URL на снимката"
+            placeholder="Въведете URL на снимката на рецептата"
+            type="url"
+          />
+        </div>
+        <div v-if="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+        <div class="form-actions">
+          <AppButton
+            type="button"
+            variant="outline"
+            @click="router.push('/recipes')"
+          >
+            Отказ
+          </AppButton>
+          <AppButton type="submit" :disabled="isSubmitting">
+            {{ isSubmitting ? "Създаване..." : "Създай рецепта" }}
+          </AppButton>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 <style scoped>
