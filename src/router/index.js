@@ -2,30 +2,30 @@ import { createRouter, createWebHistory } from "vue-router";
 import { auth } from '../services/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import MainLayout from "../components/layouts/MainLayout.vue";
-import AuthLayout from '../components/layouts/AuthLayout.vue'
+// import AuthLayout from '../components/layouts/AuthLayout.vue'
 import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        {
-            path: '/auth',
-            component: AuthLayout,
-            children: [
-              {
-                path: 'login',
-                name: 'Login',
-                component: () => import('../views/LoginView.vue'),
-                meta:{ requiresGuest: true}
-              },
-              {
-                path: 'register',
-                name: 'Register',
-                component: () => import('../views/RegisterView.vue'),
-                meta:{ requiresGuest: true}
-              }
-            ]
-          },
+        // {
+        //     path: '/auth',
+        //     component: AuthLayout,
+        //     children: [
+        //       {
+        //         path: 'login',
+        //         name: 'Login',
+        //         component: () => import('../views/LoginView.vue'),
+        //         meta:{ requiresGuest: true}
+        //       },
+        //       {
+        //         path: 'register',
+        //         name: 'Register',
+        //         component: () => import('../views/RegisterView.vue'),
+        //         meta:{ requiresGuest: true}
+        //       }
+        //     ]
+        //   },
         {
          path:'/',
          component: MainLayout,
@@ -35,6 +35,18 @@ const router = createRouter({
                  name: 'home',
                  component:() => import('../views/HomeView.vue')
              },
+             {
+              path: 'auth/login',
+              name: 'Login',
+              component: () => import('../views/LoginView.vue'),
+              meta: { requiresGuest: true }
+            },
+            {
+              path: 'auth/register',
+              name: 'Register',
+              component: () => import('../views/RegisterView.vue'),
+              meta: { requiresGuest: true }
+            },
              {
               path:'/about',
               name: 'About',

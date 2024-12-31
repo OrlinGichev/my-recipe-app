@@ -28,6 +28,7 @@ const handleLogout = async () => {
           <router-link to="/recipes"> Рецепти </router-link>
           <router-link to="/about"> За нас </router-link>
           <template v-if="authStore.isAuthenticated()">
+            <span class="user-email">{{ authStore.user?.email }}</span>
             <button @click="handleLogout" class="logout-button">Изход</button>
           </template>
           <template v-else>
@@ -91,6 +92,14 @@ const handleLogout = async () => {
   font-size: 1rem;
   padding: 0.5rem 1rem;
   transition: color 0.3s ease;
+}
+
+.user-email {
+  color: #666;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  background-color: #f5f5f5;
+  border-radius: 4px;
 }
 
 .logout-button:hover {
