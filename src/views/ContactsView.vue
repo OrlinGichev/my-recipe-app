@@ -13,6 +13,7 @@
 <style scoped>
 .view-content {
   background: white;
+  color: #333;
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

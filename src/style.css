@@ -28,6 +28,15 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.045)
+    ),
+    url("/src/assets/images/kitchen-bg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
 h1 {
@@ -65,15 +74,15 @@ button:focus-visible {
   text-align: center;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.view-content,
+.recipes-view,
+.recipe-details,
+.create-recipe,
+.edit-recipe,
+.register-form,
+.login-form {
+  background-color: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(2px);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

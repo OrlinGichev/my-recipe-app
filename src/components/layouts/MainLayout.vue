@@ -23,8 +23,8 @@ import TheFooter from "../../components/layout/TheFooter.vue";
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f5f5f5;
-  padding: 3rem;
+  background-color: rgba(245, 245, 245, 0.7);
+  padding: 1rem;
   margin: 2rem auto;
 }
 
