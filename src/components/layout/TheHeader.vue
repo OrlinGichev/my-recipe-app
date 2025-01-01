@@ -21,7 +21,7 @@ const handleLogout = async () => {
     <nav class="nav-container">
       <div class="nav-wrapper">
         <div class="logo">
-          <router-link to="/"> Моето приложение </router-link>
+          <router-link to="/"> Моите рецепти </router-link>
         </div>
         <div class="nav-links">
           <router-link to="/"> Начало </router-link>
@@ -59,13 +59,20 @@ const handleLogout = async () => {
 }
 
 .logo {
-  font-size: 1.25rem;
-  font-weight: bold;
+  font-family: "Dancing Script", cursive;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #4caf50;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logo a {
   color: #333;
   text-decoration: none;
+}
+
+.logo a:hover {
+  transform: scale(1.05);
 }
 
 .nav-links {

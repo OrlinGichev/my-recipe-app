@@ -132,6 +132,7 @@ onMounted(() => {
 <style scoped>
 .recipe-details {
   background: white;
+  color: #333;
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

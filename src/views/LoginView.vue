@@ -49,7 +49,7 @@ const handleSubmit = async () => {
   <div>
     <AppNotification :message="message" :type="type" :isVisible="isVisible" />
 
-    <div class="login-form">
+    <div class="auth-container">
       <h1 class="form-title">Вход</h1>
 
       <form @submit.prevent="handleSubmit" class="form">
@@ -95,17 +95,21 @@ const handleSubmit = async () => {
 </template>
 
 <style scoped>
-.login-form {
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
+.auth-container {
+  max-width: 460px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .form-title {
+  font-size: 2rem;
+  color: #2c3e50;
   text-align: center;
   margin-bottom: 2rem;
-  font-size: 1.5rem;
-  color: #333;
+  font-weight: 600;
 }
 
 .form {
@@ -115,33 +119,94 @@ const handleSubmit = async () => {
 }
 
 .form-group {
+  margin-bottom: 0.5rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.form-input {
   width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  border-color: #4caf50;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+.form-input.error {
+  border-color: #e53e3e;
 }
 
 .error-message {
-  color: #dc3545;
+  color: #e53e3e;
   font-size: 0.875rem;
-  text-align: center;
+  margin-top: 0.25rem;
 }
 
 .form-actions {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: center;
+  margin-top: 2rem;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #45a049;
+}
+
+.submit-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
 }
 
 .form-footer {
   text-align: center;
-  margin-top: 1rem;
-  font-size: 0.875rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.form-footer p {
+  color: #4a5568;
+  font-size: 0.9rem;
 }
 
 .form-footer a {
   color: #4caf50;
   text-decoration: none;
+  font-weight: 500;
+  margin-left: 0.5rem;
+  transition: color 0.3s ease;
 }
 
 .form-footer a:hover {
+  color: #45a049;
   text-decoration: underline;
+}
+
+.required-mark {
+  color: #e53e3e;
+  margin-left: 4px;
 }
 </style>
