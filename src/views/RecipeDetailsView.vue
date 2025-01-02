@@ -126,6 +126,14 @@ onMounted(() => {
         Към всички рецепти
       </AppButton>
     </div>
+
+    <div>
+      <i
+        class="fa-solid fa-circle-left back-button"
+        @click="router.push('/recipes')"
+      ></i>
+      <span> Назад</span>
+    </div>
   </div>
 </template>
 
@@ -218,6 +226,18 @@ h2 {
   border-radius: 50%;
   margin: 0 auto 1rem;
   animation: spin 1s linear infinite;
+}
+
+.back-button {
+  cursor: pointer;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 50%;
+  /* transition: background 0.3s; */
+}
+
+.back-button:hover {
+  background: #e0e0e0;
 }
 
 @keyframes spin {
