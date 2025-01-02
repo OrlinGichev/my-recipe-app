@@ -19,7 +19,7 @@ const recipe = ref({
   ingredients: "",
   instructions: "",
   cookingTime: "",
-  difficulty: "medium",
+  difficulty: "средна",
   servings: "",
   imageUrl: "",
 });
@@ -111,9 +111,9 @@ const handleSubmit = async () => {
         <div class="form-group">
           <label class="form-label">Сложност</label>
           <select v-model="recipe.difficulty" class="form-select">
-            <option value="easy">Лесна</option>
-            <option value="medium">Средна</option>
-            <option value="hard">Сложна</option>
+            <option value="лесна">Лесна</option>
+            <option value="средна">Средна</option>
+            <option value="трудна">Сложна</option>
           </select>
         </div>
         <div class="form-group">
