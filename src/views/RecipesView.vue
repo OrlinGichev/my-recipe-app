@@ -2,9 +2,11 @@
 import { computed, onMounted, ref } from "vue";
 import { useRecipesStore } from "../stores/recipes";
 import { useNotification } from "../composables/useNotification";
+// import { useAuthStore } from "../stores/auth";
+// import { useFavoritesStore } from "../stores/favorites";
 import AppNotification from "../components/ui/AppNotification.vue";
 import AppSearch from "../components/ui/AppSearch.vue";
-import defaultRecipeImage from "../assets/default-recipe.jpg";
+import RecipeCard from "../components/recipes/RecipeCard.vue";
 
 const recipesStore = useRecipesStore();
 const { message, type, isVisible, showNotification } = useNotification();
@@ -81,36 +83,11 @@ const handleSearch = (query) => {
 
       <!-- Списък с рецепти -->
       <div v-else class="recipes-grid">
-        <div
+        <RecipeCard
           v-for="recipe in filteredRecipes"
           :key="recipe.id"
-          class="recipe-card"
-        >
-          <div class="recipe-image">
-            <img
-              :src="recipe.imageUrl || defaultRecipeImage"
-              :alt="recipe.title"
-            />
-          </div>
-          <div class="recipe-content">
-            <h3>{{ recipe.title }}</h3>
-            <p class="recipe-description">{{ recipe.description }}</p>
-            <div class="recipe-meta">
-              <span class="cooking-time">
-                <i class="time-icon"></i>
-                {{ recipe.cookingTime }} мин
-              </span>
-              <span class="difficulty">
-                {{ recipe.difficulty }}
-              </span>
-            </div>
-            <div class="recipe-footer">
-              <router-link :to="`/recipes/${recipe.id}`" class="view-button">
-                Виж повече
-              </router-link>
-            </div>
-          </div>
-        </div>
+          :recipe="recipe"
+        />
       </div>
     </div>
   </div>
@@ -215,7 +192,7 @@ const handleSearch = (query) => {
   gap: 2rem;
 }
 
-.recipe-card {
+/* .recipe-card {
   background: white;
   border-radius: 8px;
   overflow: hidden;
@@ -272,7 +249,29 @@ const handleSearch = (query) => {
 
 .recipe-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.favorite-action {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.favorite-action i {
+  font-size: 1.25rem;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.favorite-action i.is-favorite {
+  color: #ff4b4b;
+}
+
+.favorite-action:hover i {
+  transform: scale(1.3);
 }
 
 .view-button {
@@ -283,5 +282,5 @@ const handleSearch = (query) => {
 
 .view-button:hover {
   text-decoration: underline;
-}
+} */
 </style>
