@@ -130,7 +130,7 @@ const handleSubmit = async () => {
       userId: authStore.user.uid,
     };
 
-    await recipesStore.addRecipe(recipeWithUser);
+    await recipesStore.updateRecipe(recipeWithUser);
     showNotification("Рецептата е коригирана успешно!", "success");
     router.push("/recipes");
   } catch (error) {

@@ -1,6 +1,23 @@
 <script setup>
 import TheHeader from "../../components/layout/TheHeader.vue";
 import TheFooter from "../../components/layout/TheFooter.vue";
+import { watch } from "vue";
+import { useAuthStore } from "../../stores/auth";
+import { useFavoritesStore } from "../../stores/favorites";
+
+const authStore = useAuthStore();
+const favoritesStore = useFavoritesStore();
+
+// Зареждаме любимите рецепти при промяна на потребителя
+watch(
+  () => authStore.user,
+  (newUser) => {
+    if (newUser) {
+      favoritesStore.fetchUserFavorites(newUser.uid);
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>

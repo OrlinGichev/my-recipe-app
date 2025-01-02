@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { computed } from "vue";
 import { useAuthStore } from "../../stores/auth";
 import { useFavoritesStore } from "../../stores/favorites";
 import { useNotification } from "../../composables/useNotification";
@@ -17,7 +17,10 @@ const authStore = useAuthStore();
 const favoritesStore = useFavoritesStore();
 const { message, type, isVisible, showNotification } = useNotification();
 
-const isFavorite = ref(false);
+// Проверяваме дали рецептата е в любими при зареждане
+const isFavorite = computed(() => {
+  return favoritesStore.isFavorite(props.recipe.id);
+});
 
 const toggleFavorite = async () => {
   if (!authStore.user) {
@@ -42,13 +45,6 @@ const toggleFavorite = async () => {
     showNotification("Възникна грешка", "error");
   }
 };
-
-// Проверяваме дали рецептата е в любими при зареждане
-onMounted(async () => {
-  if (authStore.user) {
-    isFavorite.value = favoritesStore.isFavorite(props.recipe.id);
-  }
-});
 </script>
 
 <template>

@@ -30,7 +30,7 @@ defineProps({
 }
 
 .notification--success {
-  background-color: #4caf50;
+  background-color: #2e85d6;
 }
 
 .notification--error {
