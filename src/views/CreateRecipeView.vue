@@ -4,6 +4,14 @@ import { useRouter } from "vue-router";
 import { useRecipesStore } from "../stores/recipes";
 import { useAuthStore } from "../stores/auth";
 import { useNotification } from "../composables/useNotification";
+import { useVuelidate } from "@vuelidate/core";
+import {
+  required,
+  minLength,
+  numeric,
+  url,
+  maxLength,
+} from "@vuelidate/validators";
 import AppNotification from "../components/ui/AppNotification.vue";
 import AppInput from "../components/ui/AppInput.vue";
 import AppButton from "../components/ui/AppButton.vue";
@@ -24,17 +32,67 @@ const recipe = ref({
   imageUrl: "",
 });
 
-const errorMessage = ref("");
+const rules = {
+  title: {
+    required,
+    minLength: minLength(3),
+    $autoDirty: true,
+  },
+  description: {
+    required,
+    minLength: minLength(10),
+    maxLength: maxLength(200),
+    $autoDirty: true,
+  },
+  ingredients: {
+    required,
+    minLength: minLength(5),
+    $autoDirty: true,
+  },
+  instructions: {
+    required,
+    minLength: minLength(10),
+    maxLength: maxLength(200),
+    $autoDirty: true,
+  },
+  cookingTime: {
+    required,
+    numeric,
+    $autoDirty: true,
+  },
+  difficulty: {
+    required,
+    $autoDirty: true,
+  },
+  servings: {
+    required,
+    numeric,
+    $autoDirty: true,
+  },
+  imageUrl: {
+    url,
+    $autoDirty: true,
+  },
+};
+
 const isSubmitting = ref(false);
+const v$ = useVuelidate(rules, recipe);
 
 const handleSubmit = async () => {
   if (isSubmitting.value) return;
 
+  const result = await v$.value.$validate();
+  if (!result) {
+    showNotification(
+      "Моля попълнете всички задължителни полета коректно",
+      "error"
+    );
+    return;
+  }
+
   isSubmitting.value = true;
-  errorMessage.value = "";
 
   try {
-    // Добавяме ID на текущия потребител
     const recipeWithUser = {
       ...recipe.value,
       userId: authStore.user.uid,
@@ -61,6 +119,9 @@ const handleSubmit = async () => {
             v-model="recipe.title"
             label="Заглавие"
             placeholder="Въведете заглавие на рецептата"
+            :error="
+              v$.title.$error ? 'Заглавието трябва да бъде поне 3 символа' : ''
+            "
             required
           />
         </div>
@@ -69,6 +130,11 @@ const handleSubmit = async () => {
             v-model="recipe.description"
             label="Кратко описание"
             placeholder="Въведете кратко описание"
+            :error="
+              v$.description.$error
+                ? 'Описанието трябва да бъде поне 10 символа и не повече от 200 символа'
+                : ''
+            "
             required
           />
         </div>
@@ -77,6 +143,11 @@ const handleSubmit = async () => {
             v-model="recipe.ingredients"
             label="Съставки"
             placeholder="Въведете съставките, всяка на нов ред"
+            :error="
+              v$.ingredients.$error
+                ? 'Съставките трябва да бъдат поне 5 символа'
+                : ''
+            "
             required
           />
         </div>
@@ -85,6 +156,11 @@ const handleSubmit = async () => {
             v-model="recipe.instructions"
             label="Инструкции"
             placeholder="Въведете инструкциите стъпка по стъпка"
+            :error="
+              v$.instructions.$error
+                ? 'Инструкциите трябва да бъдат поне 10 символа и не повече от 200 символа'
+                : ''
+            "
             required
           />
         </div>
@@ -95,6 +171,11 @@ const handleSubmit = async () => {
               label="Време за приготвяне (минути)"
               type="number"
               min="1"
+              :error="
+                v$.cookingTime.$error
+                  ? 'Времето трябва да бъде положително число'
+                  : ''
+              "
               required
             />
           </div>
@@ -104,6 +185,11 @@ const handleSubmit = async () => {
               label="Порции"
               type="number"
               min="1"
+              :error="
+                v$.servings.$error
+                  ? 'Порциите трябва да бъдат положително число'
+                  : ''
+              "
               required
             />
           </div>
@@ -123,9 +209,6 @@ const handleSubmit = async () => {
             placeholder="Въведете URL на снимката на рецептата"
             type="url"
           />
-        </div>
-        <div v-if="errorMessage" class="error-message">
-          {{ errorMessage }}
         </div>
         <div class="form-actions">
           <AppButton
@@ -198,12 +281,6 @@ const handleSubmit = async () => {
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
-}
-
-.error-message {
-  color: #dc3545;
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
 }
 
 .form-actions {
