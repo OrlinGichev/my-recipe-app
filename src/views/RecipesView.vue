@@ -1,8 +1,9 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRecipesStore } from "../stores/recipes";
 import { useNotification } from "../composables/useNotification";
 import AppNotification from "../components/ui/AppNotification.vue";
+import AppSearch from "../components/ui/AppSearch.vue";
 import defaultRecipeImage from "../assets/default-recipe.jpg";
 
 const recipesStore = useRecipesStore();
@@ -26,6 +27,25 @@ const loadRecipes = async () => {
 onMounted(() => {
   loadRecipes();
 });
+
+const searchQuery = ref("");
+
+const filteredRecipes = computed(() => {
+  if (!recipesStore.recipes) return [];
+
+  if (!searchQuery.value) return recipesStore.recipes;
+
+  const query = searchQuery.value.toLowerCase();
+  return recipesStore.recipes.filter(
+    (recipe) =>
+      recipe.title.toLowerCase().includes(query) ||
+      recipe.description.toLowerCase().includes(query)
+  );
+});
+
+const handleSearch = (query) => {
+  searchQuery.value = query;
+};
 </script>
 
 <template>
@@ -34,9 +54,12 @@ onMounted(() => {
     <div class="recipes-view">
       <div class="recipes-header">
         <h1 class="view-title">Рецепти</h1>
-        <router-link to="/recipes/create" class="create-button">
-          Добави рецепта
-        </router-link>
+        <div class="header-actions">
+          <AppSearch @search="handleSearch" placeholder="Търси рецепта..." />
+          <router-link to="/recipes/create" class="create-button">
+            Добави рецепта
+          </router-link>
+        </div>
       </div>
 
       <!-- Състояние на зареждане -->
@@ -59,7 +82,7 @@ onMounted(() => {
       <!-- Списък с рецепти -->
       <div v-else class="recipes-grid">
         <div
-          v-for="recipe in recipesStore.recipes"
+          v-for="recipe in filteredRecipes"
           :key="recipe.id"
           class="recipe-card"
         >
@@ -114,7 +137,11 @@ onMounted(() => {
 .create-button {
   background-color: #4caf50;
   color: white;
+  white-space: nowrap;
   padding: 0.75rem 1.5rem;
+  height: 40px;
+  display: flex;
+  align-items: center;
   border-radius: 4px;
   text-decoration: none;
   transition: background-color 0.3s;
@@ -148,6 +175,13 @@ onMounted(() => {
   border-top: 4px solid #4caf50;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  align-items: center;
 }
 
 @keyframes spin {
