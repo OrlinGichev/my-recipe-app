@@ -21,6 +21,15 @@ const recipesStore = useRecipesStore();
 const authStore = useAuthStore();
 const { message, type, isVisible, showNotification } = useNotification();
 
+const categories = [
+  "Десерти",
+  "Закуски",
+  "Пилешки",
+  "Паста",
+  "Вегетариански",
+  "Други",
+];
+
 const recipe = ref({
   title: "",
   description: "",
@@ -30,6 +39,7 @@ const recipe = ref({
   difficulty: "средна",
   servings: "",
   imageUrl: "",
+  category: "Други",
 });
 
 const rules = {
@@ -73,6 +83,10 @@ const rules = {
     url,
     $autoDirty: true,
   },
+  category: {
+    required,
+    $autoDirty: true,
+  },
 };
 
 const isSubmitting = ref(false);
@@ -114,6 +128,21 @@ const handleSubmit = async () => {
     <div class="create-recipe">
       <h1 class="page-title">Създай нова рецепта</h1>
       <form @submit.prevent="handleSubmit" class="recipe-form">
+        <div class="form-group">
+          <label class="form-label">Категория</label>
+          <select v-model="recipe.category" class="form-select">
+            <option
+              v-for="category in categories"
+              :key="category"
+              :value="category"
+            >
+              {{ category }}
+            </option>
+          </select>
+          <span v-if="v$.category.$error" class="error-message">
+            Моля, изберете категория
+          </span>
+        </div>
         <div class="form-group">
           <AppInput
             v-model="recipe.title"

@@ -13,6 +13,17 @@ const favoritesStore = useFavoritesStore();
 const { message, type, isVisible, showNotification } = useNotification();
 
 const isLoading = ref(false);
+const selectedCategory = ref("");
+
+const categories = [
+  "Всички",
+  "Десерти",
+  "Закуски",
+  "Пилешки",
+  "Паста",
+  "Вегетариански",
+  "Други",
+];
 
 const loadRecipes = async () => {
   isLoading.value = true;
@@ -48,6 +59,12 @@ const filteredRecipes = computed(() => {
     );
   }
 
+  if (selectedCategory.value && selectedCategory.value !== "Всички") {
+    filtered = filtered.filter(
+      (recipe) => recipe.category === selectedCategory.value
+    );
+  }
+
   if (showOnlyFavorites.value) {
     filtered = filtered.filter((recipe) =>
       favoritesStore.isFavorite(recipe.id)
@@ -56,6 +73,12 @@ const filteredRecipes = computed(() => {
 
   return filtered;
 });
+
+const clearFilters = () => {
+  searchQuery.value = "";
+  selectedCategory.value = "Всички";
+  showOnlyFavorites.value = false;
+};
 
 const handleSearch = (query) => {
   searchQuery.value = query;
@@ -81,6 +104,15 @@ const toggleFavorites = () => {
             <i class="fas fa-heart"></i>
             Любими
           </AppButton>
+          <select v-model="selectedCategory" class="category-filter">
+            <option
+              v-for="category in categories"
+              :key="category"
+              :value="category"
+            >
+              {{ category }}
+            </option>
+          </select>
           <AppSearch @search="handleSearch" placeholder="Търси рецепта..." />
           <router-link to="/recipes/create" class="create-button">
             Добави рецепта
@@ -207,6 +239,15 @@ const toggleFavorites = () => {
 .favorites-filter.active-filter {
   background: #ff4b4b;
   color: white;
+}
+
+.category-filter {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 0.9rem;
+  margin-right: 1rem;
 }
 
 @keyframes spin {
