@@ -18,85 +18,85 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Функция за превод на текст
+const CATEGORIES_MAP = {
+  'Dessert': 'Десерти',
+  'Breakfast': 'Закуски',
+  'Chicken': 'Пилешки',
+  'Pasta': 'Паста',
+  'Vegetarian': 'Вегетариански'
+};
+
 async function translateText(text) {
   try {
     const response = await axios.get('https://api.mymemory.translated.net/get', {
-      params: {
-        q: text,
-        langpair: 'en|bg'
-      }
+      params: { q: text, langpair: 'en|bg' }
     });
     return response.data.responseData.translatedText;
   } catch (error) {
     console.error('Грешка при превод:', error);
-    return text; // връщаме оригиналния текст при грешка
+    return text;
   }
 }
 
 async function fetchAndImportRecipes() {
   try {
-    console.log('Започва импортирането на рецепти...');
-    
-    // Вземаме само първите 5 рецепти от категория "Десерти"
-    const mealsResponse = await axios.get('https://www.themealdb.com/api/json/v1/1/filter.php?c=Dessert');
-    const meals = mealsResponse.data.meals.slice(0, 5);
+    for (const [apiCategory, bgCategory] of Object.entries(CATEGORIES_MAP)) {
+      console.log(`\n📂 Обработка на категория: ${bgCategory}`);
+      
+      const mealsResponse = await axios.get(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${apiCategory}`);
+      const meals = mealsResponse.data.meals.slice(0, 10); // 10 рецепти от всяка категория
 
-    for (const meal of meals) {
-      console.log(`\nОбработка на рецепта: ${meal.strMeal}`);
-      
-      const detailsResponse = await axios.get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal.idMeal}`);
-      const recipe = detailsResponse.data.meals[0];
+      for (const meal of meals) {
+        console.log(`\n🍽️ Обработка на рецепта: ${meal.strMeal}`);
+        
+        const detailsResponse = await axios.get(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal.idMeal}`);
+        const recipe = detailsResponse.data.meals[0];
 
-      // Превод на основните полета
-      console.log('Превод на заглавие...');
-      const translatedTitle = await translateText(recipe.strMeal);
-      
-      console.log('Превод на инструкции...');
-      const translatedInstructions = await translateText(recipe.strInstructions);
-      
-      // Форматиране и превод на съставките
-      const ingredients = [];
-      for (let i = 1; i <= 20; i++) {
-        const ingredient = recipe[`strIngredient${i}`];
-        const measure = recipe[`strMeasure${i}`];
-        if (ingredient && ingredient.trim()) {
-          const translatedIngredient = await translateText(`${measure} ${ingredient}`);
-          ingredients.push(translatedIngredient);
-          console.log(`Преведена съставка: ${translatedIngredient}`);
+        console.log('Превод на заглавие...');
+        const translatedTitle = await translateText(recipe.strMeal);
+        
+        console.log('Превод на инструкции...');
+        const translatedInstructions = await translateText(recipe.strInstructions);
+        
+        const ingredients = [];
+        for (let i = 1; i <= 20; i++) {
+          const ingredient = recipe[`strIngredient${i}`];
+          const measure = recipe[`strMeasure${i}`];
+          if (ingredient && ingredient.trim()) {
+            const translatedIngredient = await translateText(`${measure} ${ingredient}`);
+            ingredients.push(translatedIngredient);
+          }
         }
+
+        const difficulties = ['лесна', 'средна', 'трудна'];
+        const randomDifficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
+
+        const formattedRecipe = {
+          title: translatedTitle,
+          description: (await translateText(recipe.strInstructions.slice(0, 150))) + '...',
+          ingredients: ingredients.join('\n'),
+          instructions: translatedInstructions,
+          cookingTime: Math.floor(Math.random() * 60) + 30,
+          difficulty: randomDifficulty,
+          servings: Math.floor(Math.random() * 4) + 2,
+          imageUrl: recipe.strMealThumb,
+          category: bgCategory,
+          userId: 'system',
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+
+        await addDoc(collection(db, 'recipes'), formattedRecipe);
+        console.log(`✅ Добавена рецепта: ${formattedRecipe.title}`);
+        
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
-
-      const difficulties = ['лесна', 'средна', 'трудна'];
-      const randomDifficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
-
-      const formattedRecipe = {
-        title: translatedTitle,
-        description: (await translateText(recipe.strInstructions.slice(0, 150))) + '...',
-        ingredients: ingredients.join('\n'),
-        instructions: translatedInstructions,
-        cookingTime: Math.floor(Math.random() * 60) + 30, // 30-90 минути
-        difficulty: randomDifficulty,
-        servings: Math.floor(Math.random() * 4) + 2, // 2-6 порции
-        imageUrl: recipe.strMealThumb,
-        userId: 'system',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-
-      // Добавяме рецептата във Firebase
-      await addDoc(collection(db, 'recipes'), formattedRecipe);
-      console.log(`✓ Добавена рецепта: ${formattedRecipe.title}`);
-
-      // Изчакване между рецептите
-      await new Promise(resolve => setTimeout(resolve, 2000));
     }
 
     console.log('\n✨ Всички рецепти са импортирани успешно!');
   } catch (error) {
-    console.error('Грешка при импортиране на рецептите:', error);
+    console.error('❌ Грешка при импортиране:', error);
   }
 }
 
-// Стартиране на импортирането
 fetchAndImportRecipes();
