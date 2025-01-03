@@ -7,25 +7,7 @@ import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
     history: createWebHistory(),
-    routes: [
-        // {
-        //     path: '/auth',
-        //     component: AuthLayout,
-        //     children: [
-        //       {
-        //         path: 'login',
-        //         name: 'Login',
-        //         component: () => import('../views/LoginView.vue'),
-        //         meta:{ requiresGuest: true}
-        //       },
-        //       {
-        //         path: 'register',
-        //         name: 'Register',
-        //         component: () => import('../views/RegisterView.vue'),
-        //         meta:{ requiresGuest: true}
-        //       }
-        //     ]
-        //   },
+    routes: [      
         {
          path:'/',
          component: MainLayout,
@@ -94,6 +76,11 @@ const router = createRouter({
                  name: 'testComponents',
                  component:() => import('../views/TestComponents.vue')
              },
+             {
+              path: '/:pathMatch(.*)*',
+              name: 'NotFound',
+              component: () => import('../views/NotFoundView.vue')
+            }
          ]
         }
 ]
