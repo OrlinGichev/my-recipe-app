@@ -81,6 +81,36 @@ const handleSearch = (query) => {
 const toggleFavorites = () => {
   showOnlyFavorites.value = !showOnlyFavorites.value;
 };
+
+const itemsPerPage = ref(6);
+const currentPage = ref(1);
+
+const paginatedRecipes = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+
+  return filteredRecipes.value.slice(start, end);
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredRecipes.value.length / itemsPerPage.value);
+});
+
+const changePage = (page) => {
+  currentPage.value = page;
+};
+
+const previousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+};
 </script>
 
 <template>
@@ -134,10 +164,37 @@ const toggleFavorites = () => {
       <!-- Списък с рецепти -->
       <div v-else class="recipes-grid">
         <RecipeCard
-          v-for="recipe in filteredRecipes"
+          v-for="recipe in paginatedRecipes"
           :key="recipe.id"
           :recipe="recipe"
         />
+      </div>
+      <!-- Пагинация -->
+      <div v-if="totalPages > 1" class="pagination">
+        <button
+          :disabled="currentPage === 1"
+          @click="previousPage"
+          class="pagination-button"
+        >
+          Предишна
+        </button>
+
+        <button
+          v-for="page in totalPages"
+          :key="page"
+          @click="changePage(page)"
+          :class="['pagination-button', { active: currentPage === page }]"
+        >
+          {{ page }}
+        </button>
+
+        <button
+          :disabled="currentPage === totalPages"
+          @click="nextPage"
+          class="pagination-button"
+        >
+          Следваща
+        </button>
       </div>
     </div>
   </div>
@@ -274,5 +331,38 @@ const toggleFavorites = () => {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
   align-items: start;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.pagination-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background: #4caf50;
+  color: white;
+  border-color: #4caf50;
+}
+
+.pagination-button.active {
+  background: #4caf50;
+  color: white;
+  border-color: #4caf50;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>
