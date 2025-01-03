@@ -55,6 +55,9 @@ const toggleFavorite = async () => {
         <img :src="recipe.imageUrl || defaultRecipeImage" :alt="recipe.title" />
       </div>
       <div class="recipe-content">
+        <span class="category">
+          {{ recipe.category || "Други" }}
+        </span>
         <h3>{{ recipe.title }}</h3>
         <p class="recipe-description">{{ recipe.description }}</p>
         <div class="recipe-meta">
@@ -103,6 +106,13 @@ const toggleFavorite = async () => {
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
+}
+
+.category {
+  background-color: #5b8bbb;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
 }
 
 .recipe-card:hover {

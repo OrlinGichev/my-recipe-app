@@ -72,6 +72,10 @@ onMounted(() => {
     <!-- Детайли на рецептата -->
     <div v-else-if="recipe" class="recipe-content">
       <div class="recipe-header">
+        <div class="info-item">
+          <span class="label">Категория:</span>
+          <span>{{ recipe.category || "Други" }}</span>
+        </div>
         <h1>{{ recipe.title }}</h1>
         <div v-if="isAuthor()" class="recipe-actions">
           <AppButton

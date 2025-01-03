@@ -31,7 +31,17 @@ const recipe = ref({
   difficulty: "средна",
   servings: "",
   imageUrl: "",
+  category: "Други",
 });
+
+const categories = [
+  "Десерти",
+  "Закуски",
+  "Пилешки",
+  "Паста",
+  "Вегетариански",
+  "Други",
+];
 
 const rules = {
   title: {
@@ -74,6 +84,10 @@ const rules = {
     url,
     $autoDirty: true,
   },
+  category: {
+    required,
+    $autoDirty: true,
+  },
 };
 
 const isSubmitting = ref(false);
@@ -101,6 +115,7 @@ const loadRecipe = async () => {
       difficulty: recipeData.difficulty,
       servings: recipeData.servings,
       imageUrl: recipeData.imageUrl,
+      category: recipeData.category,
     };
   } catch (error) {
     showNotification("Грешка при зареждане на рецептата", "error");
@@ -156,6 +171,18 @@ onMounted(() => {
       <template v-else>
         <h1 class="page-title">Редактиране на рецепта</h1>
         <form @submit.prevent="handleSubmit" class="recipe-form">
+          <div class="form-group">
+            <label class="form-label">Категория</label>
+            <select v-model="recipe.category" class="form-select">
+              <option
+                v-for="category in categories"
+                :key="category"
+                :value="category"
+              >
+                {{ category }}
+              </option>
+            </select>
+          </div>
           <div class="form-group">
             <AppInput
               v-model="recipe.title"
