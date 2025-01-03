@@ -53,4 +53,8 @@ const handleEnter = () => {
   color: #666;
   margin-right: 0.5rem;
 }
+
+.input-wrapper {
+  margin-bottom: 0rem;
+}
 </style>

@@ -1,14 +1,15 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { useRecipesStore } from "../stores/recipes";
+import { useFavoritesStore } from "../stores/favorites";
 import { useNotification } from "../composables/useNotification";
-// import { useAuthStore } from "../stores/auth";
-// import { useFavoritesStore } from "../stores/favorites";
 import AppNotification from "../components/ui/AppNotification.vue";
 import AppSearch from "../components/ui/AppSearch.vue";
+import AppButton from "../components/ui/AppButton.vue";
 import RecipeCard from "../components/recipes/RecipeCard.vue";
 
 const recipesStore = useRecipesStore();
+const favoritesStore = useFavoritesStore();
 const { message, type, isVisible, showNotification } = useNotification();
 
 const isLoading = ref(false);
@@ -31,22 +32,37 @@ onMounted(() => {
 });
 
 const searchQuery = ref("");
+const showOnlyFavorites = ref(false);
 
 const filteredRecipes = computed(() => {
   if (!recipesStore.recipes) return [];
 
-  if (!searchQuery.value) return recipesStore.recipes;
+  let filtered = recipesStore.recipes;
 
-  const query = searchQuery.value.toLowerCase();
-  return recipesStore.recipes.filter(
-    (recipe) =>
-      recipe.title.toLowerCase().includes(query) ||
-      recipe.description.toLowerCase().includes(query)
-  );
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(
+      (recipe) =>
+        recipe.title.toLowerCase().includes(query) ||
+        recipe.description.toLowerCase().includes(query)
+    );
+  }
+
+  if (showOnlyFavorites.value) {
+    filtered = filtered.filter((recipe) =>
+      favoritesStore.isFavorite(recipe.id)
+    );
+  }
+
+  return filtered;
 });
 
 const handleSearch = (query) => {
   searchQuery.value = query;
+};
+
+const toggleFavorites = () => {
+  showOnlyFavorites.value = !showOnlyFavorites.value;
 };
 </script>
 
@@ -57,6 +73,14 @@ const handleSearch = (query) => {
       <div class="recipes-header">
         <h1 class="view-title">Рецепти</h1>
         <div class="header-actions">
+          <AppButton
+            @click="toggleFavorites"
+            :class="{ 'active-filter': showOnlyFavorites }"
+            class="favorites-filter"
+          >
+            <i class="fas fa-heart"></i>
+            Любими
+          </AppButton>
           <AppSearch @search="handleSearch" placeholder="Търси рецепта..." />
           <router-link to="/recipes/create" class="create-button">
             Добави рецепта
@@ -160,6 +184,30 @@ const handleSearch = (query) => {
   margin-top: 1rem;
   align-items: center;
 }
+.favorites-filter {
+  background: transparent;
+  border: 1px solid #ff4b4b;
+  color: #ff4b4b;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.favorites-filter i {
+  font-size: 0.9rem;
+}
+
+.favorites-filter:hover {
+  background: rgba(225, 57, 57, 0.1) !important;
+  border-color: #ff4b4b !important;
+}
+
+.favorites-filter.active-filter {
+  background: #ff4b4b;
+  color: white;
+}
 
 @keyframes spin {
   0% {
@@ -190,40 +238,6 @@ const handleSearch = (query) => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
-}
-
-/* .recipe-card {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-
-.recipe-card:hover {
-  transform: translateY(-15px);
-}
-
-.recipe-image {
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-}
-
-.recipe-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.recipe-content {
-  padding: 1.5rem;
-}
-
-.recipe-content h3 {
-  margin: 0 0 1rem 0;
-  color: #333;
-  font-size: 1.25rem;
 }
 
 .recipe-description {
@@ -282,5 +296,5 @@ const handleSearch = (query) => {
 
 .view-button:hover {
   text-decoration: underline;
-} */
+}
 </style>
