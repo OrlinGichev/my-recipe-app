@@ -13,7 +13,7 @@ const favoritesStore = useFavoritesStore();
 const { message, type, isVisible, showNotification } = useNotification();
 
 const isLoading = ref(false);
-const selectedCategory = ref("");
+const selectedCategory = ref("Всички");
 
 const categories = [
   "Всички",

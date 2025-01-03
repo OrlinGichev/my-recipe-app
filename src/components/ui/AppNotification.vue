@@ -27,6 +27,7 @@ defineProps({
   border-radius: 4px;
   color: white;
   z-index: 1000;
+  position: sticky;
 }
 
 .notification--success {
