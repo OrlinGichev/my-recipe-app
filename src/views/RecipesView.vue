@@ -74,12 +74,6 @@ const filteredRecipes = computed(() => {
   return filtered;
 });
 
-const clearFilters = () => {
-  searchQuery.value = "";
-  selectedCategory.value = "Всички";
-  showOnlyFavorites.value = false;
-};
-
 const handleSearch = (query) => {
   searchQuery.value = query;
 };
@@ -279,63 +273,6 @@ const toggleFavorites = () => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
-}
-
-.recipe-description {
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  line-height: 1.5;
-}
-
-.recipe-meta {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.cooking-time {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.recipe-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: auto;
-  padding-top: 1rem;
-}
-
-.favorite-action {
-  padding: 8px;
-  cursor: pointer;
-}
-
-.favorite-action i {
-  font-size: 1.25rem;
-  color: #666;
-  transition: all 0.2s ease;
-}
-
-.favorite-action i.is-favorite {
-  color: #ff4b4b;
-}
-
-.favorite-action:hover i {
-  transform: scale(1.3);
-}
-
-.view-button {
-  color: #4caf50;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.view-button:hover {
-  text-decoration: underline;
+  align-items: start;
 }
 </style>

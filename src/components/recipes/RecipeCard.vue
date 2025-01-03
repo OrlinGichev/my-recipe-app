@@ -106,6 +106,9 @@ const toggleFavorite = async () => {
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
 }
 
 .category {
@@ -122,7 +125,7 @@ const toggleFavorite = async () => {
 .recipe-image {
   width: 100%;
   height: 200px;
-  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .recipe-image img {
@@ -133,6 +136,9 @@ const toggleFavorite = async () => {
 
 .recipe-content {
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .recipe-content h3 {
@@ -146,6 +152,11 @@ const toggleFavorite = async () => {
   font-size: 0.9rem;
   margin-bottom: 1rem;
   line-height: 1.5;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  margin-bottom: 1rem;
 }
 
 .recipe-meta {
@@ -154,6 +165,7 @@ const toggleFavorite = async () => {
   margin-bottom: 1rem;
   font-size: 0.9rem;
   color: #666;
+  margin-top: auto;
 }
 
 .cooking-time {
@@ -167,6 +179,7 @@ const toggleFavorite = async () => {
   justify-content: space-between;
   align-items: center;
   margin-top: auto;
+  border-top: 1px solid #eee;
   padding-top: 1rem;
 }
 
